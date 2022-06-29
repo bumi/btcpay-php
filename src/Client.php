@@ -16,6 +16,7 @@ class Client implements BTCPayerClient
   protected $storeId = '';
   protected $connected = false;
   protected $apiKey = '';
+  protected $apiKeyData = [ "label" => "" ];
   protected $invoiceExpiration = 600;
 
   public function __construct($host, $apiKey, $storeId)
@@ -52,18 +53,16 @@ class Client implements BTCPayerClient
 
   private function authorize()
   {
-    $data = $this->request("GET", "api-keys/current");
+    $this->apiKeyData = $this->request("GET", "api-keys/current");
     $this->connected = true;
-    return $data;
+    return $this->apiKeyData;
   }
 
   public function getInfo(): array
   {
-
-    $data = $this->request("GET", "server/info");
     return [
-      'alias' => $data['version'],
-      'identity_pubkey' => $data['onion'],
+      'alias' => $this->apiKeyData["label"],
+      'identity_pubkey' => '',
     ];
   }
 
@@ -91,7 +90,7 @@ class Client implements BTCPayerClient
   {
     $storeId = $this->storeId;
     $cryptoCode = $this->cryptoCode;
-    
+
     // btc pay server expects the amount to be in mSats
     $amount = ((int)$invoice['value']) * 1000;
     $data = $this->request("POST", "stores/$storeId/lightning/$cryptoCode/invoices", [
