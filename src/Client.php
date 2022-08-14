@@ -93,11 +93,15 @@ class Client implements BTCPayerClient
 
     // btc pay server expects the amount to be in mSats
     $amount = ((int)$invoice['value']) * 1000;
-    $data = $this->request("POST", "stores/$storeId/lightning/$cryptoCode/invoices", [
+    $params = [
       'amount' => $amount,
       'description' => $invoice['memo'],
-      "expiry" => $this->invoiceExpiration,
-    ]);
+      "expiry" => $this->invoiceExpiration
+    ];
+    if (!empty($invoice["description_hash"])) {
+      $params['descriptionHash'] = $invoice['description_hash'];
+    }
+    $data = $this->request("POST", "stores/$storeId/lightning/$cryptoCode/invoices", $params);
     $data['r_hash'] = $data['id'];
     $data['payment_request'] = $data['BOLT11'];
     return $data;
