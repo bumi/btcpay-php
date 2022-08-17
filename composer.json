@@ -4,9 +4,7 @@
   "type": "library",
   "require": {
     "php": ">=7.0",
-    "guzzlehttp/guzzle": "^7.0",
-    "btcpayserver/btcpayserver-greenfield-php": "dev-master",
-    "vlucas/phpdotenv": "5.4.x-dev"
+    "guzzlehttp/guzzle": "^7.4"
   },
   "license": "MIT",
   "authors": [

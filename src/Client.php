@@ -42,7 +42,8 @@ class Client implements BTCPayerClient
       $responseBody = $response->getBody()->getContents();
       return json_decode($responseBody, true);
     } else {
-      // raise exception
+      $e = 'BTCPay Request error:' . $response->getStatusCode();
+      throw new Exception($e);
     }
   }
 
@@ -53,9 +54,13 @@ class Client implements BTCPayerClient
 
   private function authorize()
   {
-    $this->apiKeyData = $this->request("GET", "api-keys/current");
-    $this->connected = true;
-    return $this->apiKeyData;
+    try {
+      $this->apiKeyData = $this->request("GET", "api-keys/current");
+      $this->connected = true;
+      return $this->apiKeyData;
+    } catch (\Exception $e) {
+      return null;
+    }
   }
 
   public function getInfo(): array
